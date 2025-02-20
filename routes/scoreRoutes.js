@@ -1,8 +1,16 @@
 const express = require("express");
-const { getScores, getScore } = require("../controllers/scoreController");
+const {
+  getGdScores,
+  getGdScore,
+  getaptScores,
+  getaptScore,
+} = require("../controllers/scoreController");
 
 const router = express.Router();
 
-router.route("/").get(getScores);
-router.route("/:id").get(getScore);
+router.route("/gd").get(getGdScores);
+router.route("/apt").get(getaptScores);
+router.route("/gd/:id").get(getGdScore);
+router.route("/apt/:id").get(getaptScore);
+
 module.exports = router;
