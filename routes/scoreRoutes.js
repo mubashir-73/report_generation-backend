@@ -3,10 +3,8 @@ const { getGdScores, getGdScore, getaptScores, getaptScore } = require("../contr
 
 const router = express.Router();
 
-router.route("/").get(getGdScores);
-router.route("/:id").get(getGdScore);
-router.route("/").get(getaptScores);
-router.route("/:id").get(getaptScore);
+router.route("/").get(getGdScores).get(getaptScores);
+router.route("/:id").get(getGdScore).get(getaptScore);
 
 module.exports = router;
 
