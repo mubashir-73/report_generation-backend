@@ -15,4 +15,4 @@ const aptSchema = mongoose.Schema(
   { collection: "apt" },
 );
 
-module.exports = mongoose.model("apt", aptSchema);
+module.exports = mongoose.model("Apt", aptSchema);
