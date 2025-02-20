@@ -1,10 +1,12 @@
-import { Router } from "express";
-import { getGdScores, getScore } from "../controllers/scoreController";
+const express = require("express");
+const { getGdScores, getGdScore, getaptScores, getaptScore } = require("../controllers/scoreController");
 
-const router = Router();
+const router = express.Router();
 
 router.route("/").get(getGdScores);
 router.route("/:id").get(getGdScore);
 router.route("/").get(getaptScores);
 router.route("/:id").get(getaptScore);
-export default router;
+
+module.exports = router;
+
