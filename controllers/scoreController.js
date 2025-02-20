@@ -3,25 +3,25 @@ const Gd = require("../models/gdModel");
 const apt = require("../models/aptModel")
 
 const getGdScores = asyncHandler(async (req, res) => {
-  const Gdscores = await Gd.find();
-  console.log(Gdscores);
-  res.status(200).json(Gdscores);
+  const GdScores = await Gd.find();
+  console.log(GdScores);
+  res.status(200).json(GdScores);
 });
 
 const getaptScores = asyncHandler(async (req, res) => {
-  const aptscores = await apt.find();
+  const aptScores = await apt.find();
   console.log(aptScores);
   res.status(200).json(aptScores);
 });
 
 const getGdScore = asyncHandler(async (req, res) => {
-  const Gdscore = await Gd.find({ email: req.params.id });
-  console.log(Gdscore);
-  res.status(200).json(Gdscore);
+  const GdScore = await Gd.find({ email: req.params.id });
+  console.log(GdScore);
+  res.status(200).json(GdScore);
 });
 
 const getaptScore = asyncHandler(async (req, res) => {
-  const aptscore = await apt.find({ email: req.params.id });
+  const aptScore = await apt.find({ email: req.params.id });
   console.log(aptScore);
   res.status(200).json(aptScore);
 });
