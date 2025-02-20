@@ -5,7 +5,7 @@ const connectionDb = require("./config/dbConnection");
 const PORT = process.env.PORT;
 
 connectionDb();
-app.use("/api/", require("./routes/scoreRoutes").default);
+app.use("/api/", require("./routes/scoreRoutes"));
 app.listen(PORT, () => {
   console.log("Server is running on port", PORT);
 });

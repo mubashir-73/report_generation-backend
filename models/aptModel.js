@@ -12,7 +12,7 @@ const aptSchema = mongoose.Schema(
     programming: { type: Number, required: true, min: 0, max: 10 },
     comprehension: { type: Number, required: true, min: 0, max: 10 },
   },
-  { collection: "apt" },
+  { collection: "aptitude" },
 );
 
 module.exports = mongoose.model("Apt", aptSchema);
