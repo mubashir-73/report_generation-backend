@@ -8,7 +8,7 @@ const getScores = asyncHandler(async (req, res) => {
 });
 
 const getScore = asyncHandler(async (req, res) => {
-  const score = await Gd.find({ email: req.params.id });
+  const score = await apt.find({ email: req.params.id });
   console.log(score);
   res.status(200).json(score);
 });
