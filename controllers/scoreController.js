@@ -10,8 +10,8 @@ const getGdScores = asyncHandler(async (req, res) => {
 
 const getaptScores = asyncHandler(async (req, res) => {
   const aptscores = await apt.find();
-  console.log(aptscores);
-  res.status(200).json(aptscores);
+  console.log(aptScores);
+  res.status(200).json(aptScores);
 });
 
 const getGdScore = asyncHandler(async (req, res) => {
@@ -22,8 +22,8 @@ const getGdScore = asyncHandler(async (req, res) => {
 
 const getaptScore = asyncHandler(async (req, res) => {
   const aptscore = await apt.find({ email: req.params.id });
-  console.log(aptscore);
-  res.status(200).json(aptscore);
+  console.log(aptScore);
+  res.status(200).json(aptScore);
 });
 
 module.exports = { getGdScores, getGdScore, getaptScores, getaptScore };
