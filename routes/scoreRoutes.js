@@ -5,12 +5,13 @@ const {
   getaptScores,
   getaptScore,
 } = require("../controllers/scoreController");
+const validateToken = require("../middleware/validateTokenHandler");
 
 const router = express.Router();
 
 router.route("/gd").get(getGdScores);
 router.route("/apt").get(getaptScores);
-router.route("/gd/:id").get(getGdScore);
-router.route("/apt/:id").get(getaptScore);
+router.get("/gd/pc", validateToken, getGdScore);
+router.get("/apt/pc", validateToken, getaptScore);
 
 module.exports = router;
