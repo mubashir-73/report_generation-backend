@@ -3,6 +3,7 @@ const Gd = require("../models/aptModel");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const sendOTP = require("../utils/otpControl");
 
 const currentUser = asyncHandler(async (req, res) => {
   res.json(req.user);
@@ -32,6 +33,21 @@ const registerAdmin = asyncHandler(async (req, res) => {
   } else {
     res.status(400);
     throw new Error("User data is not valid");
+  }
+});
+
+const sendOtp = asyncHandler(async (req, res) => {
+  try {
+    const { email, subject, message, duration } = req.body;
+    const createdOTP = await sendOTP({
+      email,
+      subject,
+      message,
+      duration,
+    });
+    res.status(200).json(createdOTP);
+  } catch (err) {
+    res.status(400);
   }
 });
 
@@ -102,4 +118,4 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { currentUser, loginUser, registerAdmin };
+module.exports = { currentUser, loginUser, registerAdmin, sendOtp };
