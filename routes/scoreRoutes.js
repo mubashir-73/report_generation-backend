@@ -1,17 +1,11 @@
 const express = require("express");
-const {
-  getGdScores,
-  getGdScore,
-  getaptScores,
-  getaptScore,
-} = require("../controllers/scoreController");
 const validateToken = require("../middleware/validateTokenHandler");
+const { getScores, getScore } = require("../controllers/scoreController");
+const authorizeRole = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
-router.route("/gd").get(getGdScores);
-router.route("/apt").get(getaptScores);
-router.get("/gd/pc", validateToken, getGdScore);
-router.get("/apt/pc", validateToken, getaptScore);
+router.get("/scores", validateToken, authorizeRole("admin"), getScores);
+router.get("/score", validateToken, authorizeRole("user", "admin"), getScore);
 
 module.exports = router;
