@@ -1,12 +1,13 @@
-const OTP = require("../models/optModel");
+/*const OTP = require("../models/optModel");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-const sendOTP = require("../utils/otpControl");
+const dotenv = require("dotenv");
+
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   auth: {
-    user: AUTH_EMAIL,
-    pass: AUTH_PASS,
+    user: process.env.AUTH_EMAIL,
+    pass: process.env.AUTH_PASS,
   },
 });
 
@@ -64,4 +65,4 @@ const generateOTP = async () => {
   }
 };
 
-module.exports = { sendOTP, generateOTP };
+module.exports = { sendOTP, generateOTP };*/

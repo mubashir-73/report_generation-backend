@@ -36,7 +36,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
   }
 });
 
-const sendOtp = asyncHandler(async (req, res) => {
+/*const sendOtp = asyncHandler(async (req, res) => {
   try {
     const { email, subject, message, duration } = req.body;
     const createdOTP = await sendOTP({
@@ -49,7 +49,7 @@ const sendOtp = asyncHandler(async (req, res) => {
   } catch (err) {
     res.status(400);
   }
-});
+});*/
 
 const loginUser = asyncHandler(async (req, res) => {
   const { role, email, password, registerNo } = req.body;
@@ -118,4 +118,4 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { currentUser, loginUser, registerAdmin, sendOtp };
+module.exports = { currentUser, loginUser, registerAdmin };
