@@ -1,4 +1,4 @@
-/*const OTP = require("../models/optModel");
+const OTP = require("../models/optModel");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
@@ -65,4 +65,4 @@ const generateOTP = async () => {
   }
 };
 
-module.exports = { sendOTP, generateOTP };*/
+module.exports = { sendOTP, generateOTP };
