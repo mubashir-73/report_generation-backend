@@ -2,8 +2,9 @@ const asyncHandler = require("express-async-handler");
 const Gd = require("../models/aptModel");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const Otp = require("../models/optModel");
 const bcrypt = require("bcrypt");
-const sendOTP = require("../utils/otpControl");
+const { sendOTP } = require("../utils/otpControl");
 
 const currentUser = asyncHandler(async (req, res) => {
   res.json(req.user);
@@ -88,34 +89,74 @@ const loginUser = asyncHandler(async (req, res) => {
     case "user":
       if (!email || !role || !registerNo) {
         res.status(400);
-        throw new Error("All fields are mandatory!");
       }
-      const gd = await Gd.findOne({ regNo: registerNo });
+      const gd = await Gd.findOne({ email: email });
       if (gd && email === gd.email && registerNo === gd.regNo) {
-        const accessToken = jwt.sign(
-          {
-            user: {
-              registerNo: gd.regNo,
-              email: gd.email,
-              role: role,
-            },
-          },
-          process.env.ACCESS_TOKEN_SECRET,
-          {
-            expiresIn: "15m",
-          },
-        );
-        res.status(200).json({ accessToken });
+        sendOTP({
+          email,
+          subject: "OTP for login",
+          message: "OTP for login",
+          duration: 30,
+        });
       } else {
         res.status(401);
-        throw new Error("email or password is not valid");
       }
       res.json({ message: "login user" });
       break;
     default:
       res.status(400);
-      throw new Error("Invalid role");
   }
 });
 
-module.exports = { currentUser, loginUser, registerAdmin, sendOtp };
+const VerifyOTP = asyncHandler(async (req, res) => {
+  const { otp, email, registerNo } = req.body;
+
+  if (!otp || !email || !registerNo) {
+    return res
+      .status(400)
+      .json({ message: "OTP, Email, and Register Number are required." });
+  }
+
+  const user = await Otp.findOne({ email });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ message: "User not found. Check your email." });
+  }
+
+  const gd = await Gd.findOne({ regNo: registerNo });
+  if (!gd) {
+    return res
+      .status(404)
+      .json({ message: "User not found. Check your register number." });
+  }
+
+  // Ensure user.otp exists before comparing
+  if (!user.otp) {
+    return res
+      .status(400)
+      .json({ message: "OTP expired or invalid. Please request a new one." });
+  }
+
+  // Compare the provided OTP with the hashed OTP stored in the database
+  const isMatch = await bcrypt.compare(otp, user.otp);
+  if (!isMatch) {
+    return res.status(401).json({ message: "Invalid OTP. Please try again." });
+  }
+
+  // Generate access token
+  const accessToken = jwt.sign(
+    {
+      user: {
+        registerNo: gd.regNo,
+        email: gd.email,
+        role: "user", // Assuming role is 'user' for OTP verification
+      },
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "15m" },
+  );
+
+  return res.status(200).json({ accessToken });
+});
+module.exports = { currentUser, loginUser, registerAdmin, VerifyOTP };
