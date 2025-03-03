@@ -89,10 +89,9 @@ const loginUser = asyncHandler(async (req, res) => {
     case "user":
       if (!email || !role || !registerNo) {
         res.status(400);
-        throw new Error("All fields are mandatory!");
       }
-      const gd = await gd.findOne({ email });
-      if (gd) {
+      const gd = await Gd.findOne({ email: email });
+      if (gd && email === gd.email && registerNo === gd.regNo) {
         sendOTP({
           email,
           subject: "OTP for login",
@@ -100,47 +99,49 @@ const loginUser = asyncHandler(async (req, res) => {
           duration: 30,
         });
       } else {
-        res.status(404);
-        throw new Error("username not found!");
+        res.status(401);
       }
-      if (sendOTP) {
-        res.json({ message: "sent otp successfully" });
-      } else {
-        res.status(400);
-        throw new Error("OTP is not sent");
-      }
-
+      res.json({ message: "login user" });
       break;
     default:
       res.status(400);
-      throw new Error("Invalid role");
   }
 });
 
 const VerifyOTP = asyncHandler(async (req, res) => {
   const { otp, email, registerNo } = req.body;
+
   if (!otp || !email || !registerNo) {
-    res.status(400);
-    throw new Error("All fields are mandatory!");
+    return res
+      .status(400)
+      .json({ message: "OTP, Email, and Register Number are required." });
   }
 
   const user = await Otp.findOne({ email });
   if (!user) {
-    res.status(404);
-    throw new Error("User not found");
+    return res
+      .status(404)
+      .json({ message: "User not found. Check your email." });
   }
 
   const gd = await Gd.findOne({ regNo: registerNo });
   if (!gd) {
-    res.status(404);
-    throw new Error("Register number is not valid");
+    return res
+      .status(404)
+      .json({ message: "User not found. Check your register number." });
+  }
+
+  // Ensure user.otp exists before comparing
+  if (!user.otp) {
+    return res
+      .status(400)
+      .json({ message: "OTP expired or invalid. Please request a new one." });
   }
 
   // Compare the provided OTP with the hashed OTP stored in the database
   const isMatch = await bcrypt.compare(otp, user.otp);
   if (!isMatch) {
-    res.status(401);
-    throw new Error("OTP is not valid");
+    return res.status(401).json({ message: "Invalid OTP. Please try again." });
   }
 
   // Generate access token
@@ -156,6 +157,6 @@ const VerifyOTP = asyncHandler(async (req, res) => {
     { expiresIn: "15m" },
   );
 
-  res.status(200).json({ accessToken });
+  return res.status(200).json({ accessToken });
 });
 module.exports = { currentUser, loginUser, registerAdmin, VerifyOTP };
