@@ -91,8 +91,8 @@ const loginUser = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("All fields are mandatory!");
       }
-      const gd = await Gd.findOne({ regNo: registerNo });
-      if (gd && email === gd.email && registerNo === gd.regNo) {
+      const gd = await gd.findOne({ email });
+      if (gd) {
         sendOTP({
           email,
           subject: "OTP for login",
@@ -100,10 +100,16 @@ const loginUser = asyncHandler(async (req, res) => {
           duration: 30,
         });
       } else {
-        res.status(401);
-        throw new Error("email or password is not valid");
+        res.status(404);
+        throw new Error("username not found!");
       }
-      res.json({ message: "login user" });
+      if (sendOTP) {
+        res.json({ message: "sent otp successfully" });
+      } else {
+        res.status(400);
+        throw new Error("OTP is not sent");
+      }
+
       break;
     default:
       res.status(400);
