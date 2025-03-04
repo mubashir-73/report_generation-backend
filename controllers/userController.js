@@ -121,8 +121,7 @@ const VerifyOTP = asyncHandler(async (req, res) => {
         role: "user", // Assuming role is 'user' for OTP verification
       },
     },
-    process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "15m" }
+    process.env.ACCESS_TOKEN_SECRET
   );
 
   return res.status(200).json({ accessToken });
