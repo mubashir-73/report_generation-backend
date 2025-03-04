@@ -6,7 +6,8 @@ const dotenv = require("dotenv");
 dotenv.config(); // Load environment variables
 
 let transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  // host: "smtp.gmail.com",
+  service: "gmail",
   auth: {
     user: process.env.AUTH_EMAIL,
     pass: process.env.AUTH_PASS,
@@ -46,8 +47,7 @@ const sendOTP = async ({ email, subject, message, duration = 10 }) => {
       to: email,
       subject,
       html: `<p>${message}</p>
-             <p style="color:tomato;font-size:25px;letter-spacing:2px;"><b>Your OTP is ${generatedOTP}</b></p>
-             <p>This code <b>expires in ${duration} hour(s)</b>.</p>`,
+             <p style="color:tomato;font-size:25px;letter-spacing:2px;"><b>Your OTP is ${generatedOTP}</b></p>`,
     };
 
     await sendEmail(mailOptions);

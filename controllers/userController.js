@@ -53,58 +53,26 @@ const sendOtp = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { role, email, password, registerNo } = req.body;
-  if (!role) {
-    res.status(400);
-    throw new Error("Role is required");
+  const { email, registerNo } = req.body;
+
+  if (!email || !registerNo) {
+    res.status(400).json({ message: "Email and registration number are mandatory!" });
+    return;
   }
-  switch (role) {
-    case "admin":
-      if (!email || !role || !password) {
-        res.status(400);
-        throw new Error("All fields are mandatory!");
-      }
-      const user = await User.findOne({ email });
-      if (user && (await bcrypt.compare(password, user.password))) {
-        const accessToken = jwt.sign(
-          {
-            user: {
-              username: user.username,
-              email: user.email,
-              role: role,
-            },
-          },
-          process.env.ACCESS_TOKEN_SECRET,
-          {
-            expiresIn: "15m",
-          },
-        );
-        res.status(200).json({ accessToken });
-      } else {
-        res.status(401);
-        throw new Error("email or password is not valid");
-      }
-      res.json({ message: "login user" });
-      break;
-    case "user":
-      if (!email || !role || !registerNo) {
-        res.status(400);
-      }
-      const gd = await Gd.findOne({ email: email });
-      if (gd && email === gd.email && registerNo === gd.regNo) {
-        sendOTP({
-          email,
-          subject: "OTP for login",
-          message: "OTP for login",
-          duration: 30,
-        });
-      } else {
-        res.status(401);
-      }
-      res.json({ message: "login user" });
-      break;
-    default:
-      res.status(400);
+
+  const gd = await Gd.findOne({ email: email });
+  if (gd && email === gd.email && registerNo === gd.regNo) {
+    await sendOTP({
+      email,
+      subject: "OTP for login",
+      message: "OTP for login",
+      duration: 30,
+    });
+    res.status(200).json({ message: "OTP sent successfully" });
+    return;
+  } else {
+    res.status(401).json({ message: "Invalid email or registration number" });
+    return;
   }
 });
 
@@ -154,7 +122,7 @@ const VerifyOTP = asyncHandler(async (req, res) => {
       },
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "15m" },
+    { expiresIn: "15m" }
   );
 
   return res.status(200).json({ accessToken });
