@@ -64,6 +64,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (gd && email === gd.email && registerNo === gd.regNo) {
     await sendOTP({
       email,
+      name: gd.username,
       subject: "OTP for login",
       message: "OTP for login",
       duration: 30,

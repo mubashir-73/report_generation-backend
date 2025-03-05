@@ -32,7 +32,7 @@ const sendEmail = async (mailOptions) => {
   }
 };
 
-const sendOTP = async ({ email, subject, message, duration = 10 }) => {
+const sendOTP = async ({ email, name, subject, message, duration = 10 }) => {
   try {
     console.log("Sending email...");
     if (!email || !subject || !message) {
@@ -45,9 +45,12 @@ const sendOTP = async ({ email, subject, message, duration = 10 }) => {
     const mailOptions = {
       from: process.env.AUTH_EMAIL,
       to: email,
-      subject,
-      html: `<p>${message}</p>
-             <p style="color:tomato;font-size:25px;letter-spacing:2px;"><b>Your OTP is ${generatedOTP}</b></p>`,
+      subject: "Your OTP for Login - FORESE Mocks Report",
+      html: `
+        <p>Hi ${name},</p>
+        <p>Your OTP to access the Report Generation Software is: <b>${generatedOTP}</b></p>
+        <p>Regards,<br>Team FORESE</p>
+      `,
     };
 
     await sendEmail(mailOptions);
