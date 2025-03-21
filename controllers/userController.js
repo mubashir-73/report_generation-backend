@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Otp = require("../models/optModel");
 const bcrypt = require("bcrypt");
-const { sendOTP } = require("../utils/otpControl");
+// const { sendOTP } = require("../utils/otpControl");
 
 const currentUser = asyncHandler(async (req, res) => {
   res.json(req.user);
@@ -37,20 +37,20 @@ const registerAdmin = asyncHandler(async (req, res) => {
   }
 });
 
-const sendOtp = asyncHandler(async (req, res) => {
-  try {
-    const { email, subject, message, duration } = req.body;
-    const createdOTP = await sendOTP({
-      email,
-      subject,
-      message,
-      duration,
-    });
-    res.status(200).json(createdOTP);
-  } catch (err) {
-    res.status(400);
-  }
-});
+// const sendOtp = asyncHandler(async (req, res) => {
+//   try {
+//     const { email, subject, message, duration } = req.body;
+//     const createdOTP = await sendOTP({
+//       email,
+//       subject,
+//       message,
+//       duration,
+//     });
+//     res.status(200).json(createdOTP);
+//   } catch (err) {
+//     res.status(400);
+//   }
+// });
 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, registerNo } = req.body;
@@ -62,14 +62,18 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const gd = await Gd.findOne({ email: email });
   if (gd && email === gd.email && registerNo === gd.regNo) {
-    await sendOTP({
-      email,
-      name: gd.username,
-      subject: "OTP for login",
-      message: "OTP for login",
-      duration: 30,
-    });
-    res.status(200).json({ message: "OTP sent successfully" });
+    // Generate access token
+    const accessToken = jwt.sign(
+      {
+        user: {
+          registerNo: gd.regNo,
+          email: gd.email,
+          role: "user",
+        },
+      },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    res.status(200).json({ accessToken });
     return;
   } else {
     res.status(401).json({ message: "Invalid email or registration number" });
